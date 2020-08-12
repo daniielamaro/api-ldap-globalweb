@@ -37,7 +37,7 @@ namespace Prs.Controllers
             => Ok(await solicitacaoCadastroRespository.GetAll());
 
         [HttpPost("AutorizarSolicitacao")]
-        [Authorize]
+        [Authorize(Roles = "administrador,licitacao")]
         public async Task<IActionResult> AutorizarSolicitacao(int id, string login, string senha, int roleId)
         {
             if (!await usuarioRepository.AuthenticateUser(login, senha))
@@ -65,25 +65,19 @@ namespace Prs.Controllers
                 verifyUsuario = await usuarioRepository.GetUserByEmail(solicitacao.Email.Replace(".cloud", ".com.br"));
 
             if (verifyUsuario == null)
-                await usuarioRepository.CreateUser(userLdap.Name, userLdap.Login, userLdap.Email, roleId);
-            else if (verifyUsuario != null)
-                await usuarioRepository.RecreateUser(verifyUsuario.Id, userLdap.Name, userLdap.Login, userLdap.Email, roleId, verifyUsuario.Token);
+                verifyUsuario = await usuarioRepository.CreateUser(userLdap.Name, userLdap.Login, userLdap.Email, roleId);
+            else
+                verifyUsuario = await usuarioRepository.RecreateUser(verifyUsuario.Id, userLdap.Name, userLdap.Login, userLdap.Email, roleId, verifyUsuario.Token);
 
-            await solicitacaoCadastroRespository.Delete(solicitacao);
+            await solicitacaoCadastroRespository.Delete(id);
 
-            return Ok(solicitacao);
+            return Ok(verifyUsuario);
         }
 
         [HttpPost("NaoAutorizarSolicitacao")]
-        [Authorize]
-        public async Task<IActionResult> NaoAutorizarSolicitacao(int id)
-        {
-            var solicitacao = await solicitacaoCadastroRespository.GetById(id);
-
-            await solicitacaoCadastroRespository.Delete(solicitacao);
-
-            return Ok(solicitacao);
-        }
+        [Authorize(Roles = "administrador,licitacao")]
+        public async Task<IActionResult> NaoAutorizarSolicitacao(int id) => Ok(await solicitacaoCadastroRespository.Delete(id));
+        
 
     }
 }

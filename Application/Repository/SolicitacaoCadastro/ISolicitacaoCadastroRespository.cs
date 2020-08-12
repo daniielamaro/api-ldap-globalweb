@@ -10,6 +10,6 @@ namespace Application.Repository.SolicitacaoCadastro
         Task<Domain.Entities.SolicitacaoCadastro> CreateSolicitacao(string nome, string email, string motivo);
         Task<List<Domain.Entities.SolicitacaoCadastro>> GetAll();
         Task<Domain.Entities.SolicitacaoCadastro> GetById(int id);
-        Task Delete(Domain.Entities.SolicitacaoCadastro solicitacao);
+        Task<Domain.Entities.SolicitacaoCadastro> Delete(int id);
     }
 }

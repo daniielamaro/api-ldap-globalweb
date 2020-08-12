@@ -25,7 +25,7 @@ namespace Prs.Controllers
         }
 
         [HttpPost("GetAll")]
-        [Authorize]
+        [Authorize(Roles = "licitacao,administrador")]
         public async Task<IActionResult> GetAll() => Ok(await ldapRepository.Execute());
     }
 }

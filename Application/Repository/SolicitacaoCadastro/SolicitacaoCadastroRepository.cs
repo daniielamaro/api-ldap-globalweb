@@ -30,7 +30,7 @@ namespace Application.Repository.SolicitacaoCadastro
         public async Task<Domain.Entities.SolicitacaoCadastro> CreateSolicitacao(string nome, string email, string motivo) => await create.Execute(nome, email, motivo);
         public async Task<List<Domain.Entities.SolicitacaoCadastro>> GetAll() => await getAll.Execute();
         public async Task<Domain.Entities.SolicitacaoCadastro> GetById(int id) => await getById.Execute(id);
-        public async Task Delete(Domain.Entities.SolicitacaoCadastro solicitacao) => await delete.Execute(solicitacao);
+        public async Task<Domain.Entities.SolicitacaoCadastro> Delete(int id) => await delete.Execute(id);
 
     }
 }

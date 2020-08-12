@@ -20,6 +20,7 @@ namespace Prs.Controllers
         }
 
         [HttpPost("GetAll")]
+        [Authorize(Roles = "licitacao,administrador")]
         public async Task<IActionResult> GetTMC()
         {
             return Ok(await roleRepository.GetAllRole());

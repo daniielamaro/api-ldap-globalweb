@@ -7,6 +7,6 @@ namespace Infrastructure.Repository.SolicitacaoCadastro.DeleteSolicitacao
 {
     public interface IDeleteSolicitacao
     {
-        Task Execute(Domain.Entities.SolicitacaoCadastro solicitacao);
+        Task<Domain.Entities.SolicitacaoCadastro> Execute(int id);
     }
 }
