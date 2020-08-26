@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Novell.Directory.Ldap;
+using System;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repository.Ldap.GetUserLdap
@@ -49,7 +50,38 @@ namespace Infrastructure.Repository.Ldap.GetUserLdap
                         }
                     }
                 }
-                catch { }
+                catch {
+
+                    foreach (var ldapVerif in configs)
+                    {
+                        try
+                        {
+                            var searchFilter = $@"(mail={userTarget})";
+                            var result = connection.Search(
+                                ldapVerif.BaseDn,
+                                LdapConnection.ScopeSub,
+                                searchFilter,
+                                new[] { "name", "mail", "samaccountname" },
+                                false
+                            );
+
+                            var user = result.Next();
+                            if (user != null)
+                            {
+                                if (connection.Bound)
+                                {
+                                    return new UserLdap
+                                    {
+                                        Login = user.GetAttribute("samaccountname").StringValue,
+                                        Email = user.GetAttribute("mail").StringValue,
+                                        Name = user.GetAttribute("name").StringValue
+                                    };
+                                }
+                            }
+                        }
+                        catch{}
+                    }
+                }
             }
 
             connection.Disconnect();

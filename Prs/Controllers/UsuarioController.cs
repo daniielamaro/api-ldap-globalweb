@@ -45,10 +45,10 @@ namespace Prs.Controllers
 
             var userLdap = await ldapRepository.GetUser(login, senha, usuario.Email);
 
-            if (userLdap == null && usuario.Email.Contains(".com.br"))
+            if (userLdap == null && usuario.Email.Contains("globalweb.com.br"))
                 userLdap = await ldapRepository.GetUser(login, senha, usuario.Email.Replace(".com.br", ".cloud"));
 
-            if (userLdap == null && usuario.Email.Contains(".cloud"))
+            if (userLdap == null && usuario.Email.Contains("globalweb.cloud"))
                 userLdap = await ldapRepository.GetUser(login, senha, usuario.Email.Replace(".cloud", ".com.br"));
 
             if (userLdap == null)
@@ -56,10 +56,10 @@ namespace Prs.Controllers
 
             var verifyUsuario = await usuarioRepository.GetUserByEmail(usuario.Email);
 
-            if (verifyUsuario == null && usuario.Email.Contains(".com.br"))
+            if (verifyUsuario == null && usuario.Email.Contains("globalweb.com.br"))
                 verifyUsuario = await usuarioRepository.GetUserByEmail(usuario.Email.Replace(".com.br", ".cloud"));
 
-            if (verifyUsuario == null && usuario.Email.Contains(".cloud"))
+            if (verifyUsuario == null && usuario.Email.Contains("globalweb.cloud"))
                 verifyUsuario = await usuarioRepository.GetUserByEmail(usuario.Email.Replace(".cloud", ".com.br"));
 
             return verifyUsuario == null ?
