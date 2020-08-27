@@ -8,15 +8,10 @@ namespace Infrastructure.Repository.Ldap.GetUserLdap
 {
     public class GetUserLdap : IGetUserLdap
     {
-        private readonly ApiContext context;
-
-        public GetUserLdap()
-        {
-            context = new ApiContext();
-        }
-
         public async Task<UserLdap> Execute(string username, string password, string userTarget)
         {
+            using var context = new ApiContext();
+
             var configs = await context.Ldaps.ToListAsync();
             var connection = new LdapConnection();
 
