@@ -36,35 +36,20 @@ namespace Prs.Controllers
             return Ok(user);
         }
 
-        [HttpPost("Create")]
-        [Authorize(Roles = "licitacao,administrador")]
-        public async Task<IActionResult> Create(string login, string senha, UsuarioRequestCreate usuario)
+        [HttpPost("TesteBuild1")]
+        [AllowAnonymous]
+        public async Task<IActionResult> TesteBuild1(string login, string senha)
         {
             if (!await usuarioRepository.AuthenticateUser(login, senha))
                 return Unauthorized("Usuario ou senha invalidos");
 
-            var userLdap = await ldapRepository.GetUser(login, senha, usuario.Email);
+            var user = await usuarioRepository.GetUserByLogin(login);
 
-            if (userLdap == null && usuario.Email.Contains("globalweb.com.br"))
-                userLdap = await ldapRepository.GetUser(login, senha, usuario.Email.Replace(".com.br", ".cloud"));
+            if (user == null)
+                return NotFound("Usuario não cadastrado na Cental de Licitações.");
 
-            if (userLdap == null && usuario.Email.Contains("globalweb.cloud"))
-                userLdap = await ldapRepository.GetUser(login, senha, usuario.Email.Replace(".cloud", ".com.br"));
-
-            if (userLdap == null)
-                return NotFound("Não foi encontrado um funcionário com esse email");
-
-            var verifyUsuario = await usuarioRepository.GetUserByEmail(usuario.Email);
-
-            if (verifyUsuario == null && usuario.Email.Contains("globalweb.com.br"))
-                verifyUsuario = await usuarioRepository.GetUserByEmail(usuario.Email.Replace(".com.br", ".cloud"));
-
-            if (verifyUsuario == null && usuario.Email.Contains("globalweb.cloud"))
-                verifyUsuario = await usuarioRepository.GetUserByEmail(usuario.Email.Replace(".cloud", ".com.br"));
-
-            return verifyUsuario == null ?
-                    Ok(await usuarioRepository.CreateUser(userLdap.Name, userLdap.Login, userLdap.Email, usuario.RoleId)) :
-                    Ok(await usuarioRepository.RecreateUser(verifyUsuario.Id, userLdap.Name, userLdap.Login, userLdap.Email, usuario.RoleId, verifyUsuario.Token));
+            return Ok(user);
         }
+
     }
 }
